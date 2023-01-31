@@ -7,6 +7,7 @@ $dbname = "blog";
 
 // Création de la connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
+$method = $_SERVER['REQUEST_METHOD'];
 
 // Vérification de la connexionmet 
 if ($conn->connect_error) {
@@ -58,7 +59,7 @@ function getByCategory()
     global $conn;
 
     // Récupération de l'id de la catégorie
-    $id = $_GET['id'];
+    $id = $_GET['category_id'];
     $sql = "SELECT * FROM articles WHERE category_id = $id";
 
     $result = $conn->query($sql);
@@ -108,14 +109,13 @@ function handlePostRequest()
     global $conn;
 
     // Récupération des données envoyées en POST
-    $data = json_decode(file_get_contents('php://input'), true);
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $category_id = $_POST['category_id'];
 
     // Vérification des données envoyées
-    if (isset($data['title']) && isset($data['content']) && isset($data['category_id'])) {
+    if (isset($_POST['title']) && isset($_POST['content']) && isset($_POST['category_id'])) {
         // Insertion des données dans la base de données
-        $title = $data['title'];
-        $content = $data['content'];
-        $category_id = $data['category_id'];
         $sql = "INSERT INTO articles (title, content, category_id) VALUES ('$title', '$content', '$category_id')";
         if ($conn->query($sql) === TRUE) {
             echo "Article créé avec succès";
